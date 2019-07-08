@@ -1,0 +1,30 @@
+-- update to the Call Doc database
+
+set @productKey = (select productKey from productCodes where ProductFullName = 'Eligibility & Enrollment');
+insert into ReasonCodes(ProductKey, ReasonText) values (@productkey, 'SBC Request');
+insert into ReasonCodes(ProductKey, ReasonText) values (@productkey, 'Fulfillment Request');
+
+set @productKey = (select productKey from productCodes where ProductFullName = 'COBRAEAS');
+insert into ReasonCodes(ProductKey, ReasonText) values (@productkey, 'SBC Request');
+insert into ReasonCodes(ProductKey, ReasonText) values (@productkey, 'Fulfillment Request');
+
+
+-- add new Product Codes to Call Doc database
+
+insert into ProductCodes (ProductCode, ProdcutName) values ('NPS', 'Net Promoter Score');
+
+set @productKey = (select productKey from productCodes where ProductFullName = 'Net Promoter Score');
+
+insert into ReasonCodes (ProductKey, ReasonText) values (@productKey, 'Prommoter - Initial Response');
+insert into ReasonCodes (ProductKey, ReasonText) values (@productKey, 'Prommoter - 1st Contact');
+insert into ReasonCodes (ProductKey, ReasonText) values (@productKey, 'Prommoter - 2nd Contact');
+insert into ReasonCodes (ProductKey, ReasonText) values (@productKey, 'Prommoter - Delinquint');
+insert into ReasonCodes (ProductKey, ReasonText) values (@productKey, 'Passive - Initial Response');
+insert into ReasonCodes (ProductKey, ReasonText) values (@productKey, 'Passive - 1st Contact');
+insert into ReasonCodes (ProductKey, ReasonText) values (@productKey, 'Passive - 2nd Contact');
+insert into ReasonCodes (ProductKey, ReasonText) values (@productKey, 'Passive - Delinquint');
+insert into ReasonCodes (ProductKey, ReasonText) values (@productKey, 'Detractor - Initial Response');
+insert into ReasonCodes (ProductKey, ReasonText) values (@productKey, 'Detractor - 1st Contact');
+insert into ReasonCodes (ProductKey, ReasonText) values (@productKey, 'Detractor - 2nd Contact');
+insert into ReasonCodes (ProductKey, ReasonText) values (@productKey, 'Detractor - Delinquint');
+
