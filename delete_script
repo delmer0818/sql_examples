@@ -1,0 +1,3 @@
+-- updating data in Call Doc database
+declare @productkey int;
+delete from ReasonCodes where ReasonText in ('SBC Request', 'Fulfillment Request');
