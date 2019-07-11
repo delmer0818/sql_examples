@@ -18,13 +18,13 @@ set @productKey = (select productKey from productCodes where ProductFullName = '
 insert into ReasonCodes (ProductKey, ReasonText) values (@productKey, 'Prommoter - Initial Response');
 insert into ReasonCodes (ProductKey, ReasonText) values (@productKey, 'Prommoter - 1st Contact');
 insert into ReasonCodes (ProductKey, ReasonText) values (@productKey, 'Prommoter - 2nd Contact');
-insert into ReasonCodes (ProductKey, ReasonText) values (@productKey, 'Prommoter - Delinquint');
+insert into ReasonCodes (ProductKey, ReasonText) values (@productKey, 'Prommoter - Delinquent');
 insert into ReasonCodes (ProductKey, ReasonText) values (@productKey, 'Passive - Initial Response');
 insert into ReasonCodes (ProductKey, ReasonText) values (@productKey, 'Passive - 1st Contact');
 insert into ReasonCodes (ProductKey, ReasonText) values (@productKey, 'Passive - 2nd Contact');
-insert into ReasonCodes (ProductKey, ReasonText) values (@productKey, 'Passive - Delinquint');
+insert into ReasonCodes (ProductKey, ReasonText) values (@productKey, 'Passive - Delinquent');
 insert into ReasonCodes (ProductKey, ReasonText) values (@productKey, 'Detractor - Initial Response');
 insert into ReasonCodes (ProductKey, ReasonText) values (@productKey, 'Detractor - 1st Contact');
 insert into ReasonCodes (ProductKey, ReasonText) values (@productKey, 'Detractor - 2nd Contact');
-insert into ReasonCodes (ProductKey, ReasonText) values (@productKey, 'Detractor - Delinquint');
+insert into ReasonCodes (ProductKey, ReasonText) values (@productKey, 'Detractor - Delinquent');
 
