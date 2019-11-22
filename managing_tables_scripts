@@ -1,0 +1,51 @@
+CREATE TABLE [dbo].[LU_PR_SPEC_PRICING](
+	[SPECIAL_PRICING_KEY] [smallint] NOT NULL,
+	[SPECIAL_PRICING_ID] [varchar](32) NULL,
+	[SPECIAL_PRICING_DESCR] [varchar](128) NOT NULL,
+	[ACTIVE_FLAG] [int] NULL,
+	[PROMPT_FLAG] [int] NULL,
+	[SPECIAL_PRICING_SORT] [int] NULL,
+	[CURRENT_FEED_FLAG] [tinyint] NULL,
+	[DOWNLOAD_FLAG] [tinyint] NULL,
+	[FILE_KEY] [int] NULL,
+	[AUDIT_LOAD_KEY] [int] NULL,
+	[CREATE_DATE] [smalldatetime] NOT NULL,
+	[UPDATE_DATE] [datetime] NOT NULL,
+	[SOURCE_SYSTEM_ID] [varchar](32) NOT NULL,
+	[LOAD_DATE] [datetime] NULL
+) ON [PRIMARY]
+
+CREATE TABLE [dbo].[lu_st_account_type](
+	[ACCOUNT_TYPE_KEY] [int] NOT NULL,
+	[ACCOUNT_TYPE_ID] [varchar](6) NULL,
+	[ACCOUNT_TYPE_DESCR] [varchar](50) NULL,
+	[CREATE_DATE] [datetime] NULL,
+	[UPDATE_DATE] [datetime] NULL,
+	[SOURCE_SYSTEM_ID] [varchar](20) NULL,
+	[LOAD_DATE] [datetime] NULL
+) ON [PRIMARY]
+
+CREATE TABLE [dbo].[LU_ST_AP_ACCT_CLASS](
+	[ACCT_CLASS_KEY] [smallint] NOT NULL,
+	[ACCT_CLASS_ID] [varchar](64) NULL,
+	[ACCT_CLASS_DESCR] [varchar](128) NULL,
+	[TRANS_UPDATE_USER_ID] [varchar](64) NULL,
+	[TRANS_UPDATE_DATE] [datetime] NULL,
+	[TRANS_LOAD_USER_ID] [varchar](64) NULL,
+	[TRANS_LOAD_DATE] [datetime] NULL,
+	[ACTIVE_FLAG] [smallint] NULL,
+	[PROMPT_FLAG] [smallint] NULL,
+	[CURRENT_FEED_FLAG] [smallint] NULL,
+	[DOWNLOAD_FLAG] [smallint] NULL,
+	[FILE_KEY] [int] NULL,
+	[AUDIT_LOAD_KEY] [int] NULL,
+	[CREATE_DATE] [datetime] NULL,
+	[CREATE_USER_ID] [varchar](128) NULL,
+	[UPDATE_DATE] [datetime] NULL,
+	[UPDATE_USER_ID] [varchar](128) NULL,
+	[SOURCE_SYSTEM_ID] [varchar](32) NOT NULL,
+	[LOAD_DATE] [datetime] NULL,
+	[CLIENT_KEY] [int] NULL,
+	[CLIENT_ID] [varchar](64) NULL
+) ON [PRIMARY]
+
