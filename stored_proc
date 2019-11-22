@@ -1,0 +1,27 @@
+/****** Object:  StoredProcedure [dbo].[SP_EXPORT_VIEW_TO_FILE] ******/
+SET ANSI_NULLS ON
+
+SET QUOTED_IDENTIFIER ON
+
+
+create PROC [dbo].[SP_EXPORT_VIEW_TO_FILE]
+  ( @view_schema varchar(1024), @view_name varchar(1024) ,@file_path varchar(1024), @file_name varchar(1024))
+AS
+DECLARE @ReturnCode int;
+BEGIN
+	BEGIN TRY
+		BEGIN
+			DECLARE @SQL_DY as varchar(8000);
+			select @SQL_DY = 'bcp "SELECT * FROM '+@view_schema+'.dbo.'+@view_name+' " queryout '+@file_path+'\'+@file_name+ ' -c -Sapprddb05 -U[username] -P[password] -T -t"|"';
+    			EXEC @ReturnCode = XP_CmdShell @SQL_DY;
+    			PRINT @ReturnCode
+    			RETURN case when @ReturnCode = 0 then @ReturnCode else 1 end;
+		END;
+	END TRY
+	BEGIN CATCH
+		BEGIN
+			RETURN 1;
+		END;
+	END CATCH
+
+END
