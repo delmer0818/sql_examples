@@ -1,22 +1,12 @@
+/*** 1 ***/
+
 select * from [apprddb05].[ap_trans].[dbo].[APT_cl_contact_type]
 except 
 select * from [apprddb05].[moore_trans].[dbo].[APT_cl_contact_type];
 
+/*** 2 ***/
 
-    
-/*****************************************************************************************************************************/
-/* The 1st select statement from AP_Trans is from a view located in that database.  The selected information is inserted in  */
-/* temporary table #tmp_table1.  The selected information comes from apprddb01.ap_collections.dbo.APC_PV_SERV_COMP.  With a  */
-/* left join (select distinct provider_service_component_id from ap_trans.dbo.apc_pv_serv_comp_cl_wh).                       */
-/* The 2nd select statement uses database Moore_Trans, a temporary database.  The selected information is inserted into      */
-/* temporary table #tmp_table2.  The information for the second select comes from apprddb05.moore_trans.dbo.APC_PV_SERV_COMP */
-/* with a left join (select distinct provider_service_component_id from mooore_trans.dbo.apc_pv_serv_comp_cl_wh).            */
-/* Both tables used in the select were copied from their original databases and tables into tables with the same name in the */
-/* database Moore_Trans.  A select is ran on both temp files with an except statement located between each.  This was done   */
-/* to see if both select statements are pulling the exact same information.  Temp tables were then dropped.                  */                                                                          */
-/*****************************************************************************************************************************/
-
-USE [AP_TRANS]
+USE [clientname1_TRANS]
 
 select  C.PROVIDER_SERVICE_COMPONENT_ID
         ,       C.PROVIDER_SERVICE_COMPONENT_GUID
@@ -40,52 +30,17 @@ select  C.PROVIDER_SERVICE_COMPONENT_ID
 into #tmp_table1
 from    apprddb01.ap_collections.dbo.APC_PV_SERV_COMP C
 left join (select distinct provider_service_component_id from ap_trans.dbo.apc_pv_serv_comp_cl_wh) w
-  on c.provider_service_component_id = w.provider_service_component_id
-where (provider_id in (--259       --BEAM
-                      303       --PATRON
-                     ,316       --RUMCHATA
-                     ,359       --ESPIRITUS
-                     ,409       --RABBIT HOLE
-                     ,431       --GARRISON
-                     ,433       --INTREPID
-                     ,426       --GREATVINES
-                     ,448       --HINT
-                     ,256       --NABCA
-                     ,327       --PARIRIE CREEK
-                     ,307     --TDLINX
-                     ,350       --PERNOD
-                     ,83,92,93,124,127,135,158,205,213,214,215,258  --SWS
-                     )
-  OR c.provider_service_component_id in (select distinct provider_service_component_id from apc_pv_serv_comp_cl_wh
-                                         where client_id in (
-                                         -4         --APERITY
-                                         ,1         --BEAM
-                                         ,6         --PATRON
-                                         ,11        --RUMCHATA
-                                                                                 ,16      --MARKETING MIX
-                                         ,17        --COLLECTIONS
-                                         ,18        --NABCA
-                                         ,24        --ESPIRITUS
-                                         ,34        --RABBIT HOLE
-                                         ,35        --DEMO
-                                         ,36        --SHARED_ETL
-                                         ,37        --GARRISON BROS
-                                         ,39        --INTREPID
-                                  ,40        --TEST PATRON
-                                         ,43        --HINT
-                                         ,45        --TEST RUMCHATA
-                                         ,46        --PURUS VODKA
-                                         ,47        --PVCOLL
-                                         ,14        --PRAIRIE CREEK
-                                         ,5         --PERNOD
-                                         ))
-   OR w.provider_service_component_id is null   --For some reason a not in query didn't work and had to do a left join
-   )
-  and    provider_service_component_descr not like '%green book%'
-  and isnull(dir_client_load,0) <> 1    --NOT Beam direct client load
+on c.provider_service_component_id = w.provider_service_component_id
+where 
+(provider_id in (303, 316, 359, 409, 431, 433, 426, 448, 256, 327, 307, 350, 83, 92, 93, 124, 127, 135, 158, 205, 213, 214, 215, 258)
+ OR c.provider_service_component_id in (select distinct provider_service_component_id from apc_pv_serv_comp_cl_wh
+                                        where client_id in (-4, 1, 6, 11, 17, 18, 24, 34, 35, 36, 37, 39, 40, 43, 45, 46, 47, 14, 5))
+ OR w.provider_service_component_id is null)
+ and    provider_service_component_descr not like '%green book%'
+ and isnull(dir_client_load,0) <> 1    --NOT Beam direct client load
   ;
   
-USE [moore_TRANS]
+USE [clientname2_TRANS]
 
 select  C.PROVIDER_SERVICE_COMPONENT_ID
         ,       C.PROVIDER_SERVICE_COMPONENT_GUID
@@ -108,52 +63,17 @@ select  C.PROVIDER_SERVICE_COMPONENT_ID
         ,       C.DIR_CLIENT_LOAD
 into #tmp_table2
 from    APC_PV_SERV_COMP C
-left join (select distinct provider_service_component_id from apc_pv_serv_comp_cl_wh) w
+left join 
+ (select distinct provider_service_component_id from apc_pv_serv_comp_cl_wh) w
   on c.provider_service_component_id = w.provider_service_component_id
-where (provider_id in (--259       --BEAM
-                      303       --PATRON
-                     ,316       --RUMCHATA
-                     ,359       --ESPIRITUS
-                     ,409       --RABBIT HOLE
-                     ,431       --GARRISON
-                     ,433       --INTREPID
-                     ,426       --GREATVINES
-                     ,448       --HINT
-                     ,256       --NABCA
-                     ,327       --PARIRIE CREEK
-                     ,307     --TDLINX
-                     ,350       --PERNOD
-                     ,83,92,93,124,127,135,158,205,213,214,215,258  --SWS
-                     )
+  where 
+  (provider_id in (303, 316, 359, 409, 431, 433, 426, 448, 256, 327, 307, 350, 83, 92, 93, 124, 127, 135, 158, 205, 213, 214, 215, 258)
   OR c.provider_service_component_id in (select distinct provider_service_component_id from apc_pv_serv_comp_cl_wh
-                                         where client_id in (
-                                         -4         --APERITY
-                                         ,1         --BEAM
-                                         ,6         --PATRON
-                                         ,11        --RUMCHATA
-                                                                                 ,16      --MARKETING MIX
-                                         ,17        --COLLECTIONS
-                                         ,18        --NABCA
-                                         ,24        --ESPIRITUS
-                                         ,34        --RABBIT HOLE
-                                         ,35        --DEMO
-                                         ,36        --SHARED_ETL
-                                         ,37        --GARRISON BROS
-                                         ,39        --INTREPID
-                                  ,40        --TEST PATRON
-                                         ,43        --HINT
-                                         ,45        --TEST RUMCHATA
-                                         ,46        --PURUS VODKA
-                                         ,47        --PVCOLL
-                                         ,14        --PRAIRIE CREEK
-                                         ,5         --PERNOD
-                                         ))
-   OR w.provider_service_component_id is null   --For some reason a not in query didn't work and had to do a left join
-   )
+                                         where client_id in (-4, 1, 6, 11, 17, 18, 24, 34, 35, 36, 37, 39, 40, 43, 45, 46, 47, 14, 5))
+  OR w.provider_service_component_id is null   --For some reason a not in query didn't work and had to do a left join)
   and    provider_service_component_descr not like '%green book%'
-  and isnull(dir_client_load,0) <> 1    --NOT Beam direct client load
+  and isnull(dir_client_load,0) <> 1    
   ;
-
 
   select * from ap_trans.dbo.#tmp_table1
   except 
@@ -161,86 +81,3 @@ where (provider_id in (--259       --BEAM
  
   drop table ap_trqns.dbo.#tmp_table1;
   drop table moore_trans.dbo.#tmp_table2;
-    
-    
-    
-/*****************************************************************************************************************************/
-/* The 1st select statement from AP_Trans is from a view located in that database.  The selected information is inserted in  */
-/* temporary table #tmp_table1.  The selected information comes from apprddb01.ap_collections.dbo.APC_PV_SERV_COMP.          */
-/* The 2nd select statement uses database Moore_Trans, a temporary database.  The selected information is inserted into      */
-/* temporary table #tmp_table2.  The information for the second select comes from apprddb05.moore_trans.dbo.APC_PV_SERV_COMP */
-/* which was copied from apprddb01.ap_collections.dbo.APC_PV_SERV_COMP.  A select is ran on both temp files with an except   */
-/* statement located between each.  This was done to see if both select statements are pulling the exact same information.   */
-/* Temp tables were then dropped.                                                                                            */
-/*****************************************************************************************************************************/
-
-USE [AP_TRANS]
-
-select PROVIDER_SERVICE_COMPONENT_ID,
-     PROVIDER_SERVICE_COMPONENT_GUID,
-     PROVIDER_SERVICE_COMPONENT_DESCR,
-     PROVIDER_ID,
-     SERVICE_COMPONENT_ID,
-     DELIVERY_OVERRIDE_FLAG,
-     DELIVERY_OVERRIDE_METHOD_ID,
-     DELIVERY_OVERRIDE_LOCATION,
-     DELIVERY_OVERRIDE_UID,
-     DELIVERY_OVERRIDE_PWD,
-     NETWORK_OVERRIDE_PATH,
-     TIMING_ID,
-     ACTIVE_FLAG,
-     CREATE_DATE,
-     CREATE_USER_ID,
-     UPDATE_DATE,
-     UPDATE_USER_ID,
-     PV_SRC_GROUP_ID,
-     DIR_CLIENT_LOAD
-into #tmp_table1
-from apprddb01.ap_collections.dbo.APC_PV_SERV_COMP
-where provider_service_component_id not in (
-        select provider_service_component_id
-        from apprddb01.ap_collections.dbo.APC_PV_SERV_COMP
-        where (provider_service_component_descr like 'mc%' or provider_service_component_descr like 'pcreek%'
-               or provider_service_component_descr like '%RUMCHATA%' or provider_service_component_descr like '%MONTHLY-RC%')
-         and provider_service_component_descr not like 'mc n%'
-        )
-;
-
-USE [MOORE_TRANS]
-
-select PROVIDER_SERVICE_COMPONENT_ID,
-     PROVIDER_SERVICE_COMPONENT_GUID,
-     PROVIDER_SERVICE_COMPONENT_DESCR,
-     PROVIDER_ID,
-     SERVICE_COMPONENT_ID,
-     DELIVERY_OVERRIDE_FLAG,
-     DELIVERY_OVERRIDE_METHOD_ID,
-     DELIVERY_OVERRIDE_LOCATION,
-     DELIVERY_OVERRIDE_UID,
-     DELIVERY_OVERRIDE_PWD,
-     NETWORK_OVERRIDE_PATH,
-     TIMING_ID,
-     ACTIVE_FLAG,
-     CREATE_DATE,
-     CREATE_USER_ID,
-     UPDATE_DATE,
-     UPDATE_USER_ID,
-     PV_SRC_GROUP_ID,
-     DIR_CLIENT_LOAD
-into #tmp_table2
-from APC_PV_SERV_COMP
-where provider_service_component_id not in (
-        select provider_service_component_id
-        from APC_PV_SERV_COMP
-        where (provider_service_component_descr like 'mc%' or provider_service_component_descr like 'pcreek%'
-               or provider_service_component_descr like '%RUMCHATA%' or provider_service_component_descr like '%MONTHLY-RC%')
-         and provider_service_component_descr not like 'mc n%'
-        )
-;
-
-select * from ap_trans.dbo.#tmp_table1
-except 
-select * from moore_trans.dbo.#tmp_table2;
- 
-drop table ap_trqns.dbo.#tmp_table1;
-drop table moore_trans.dbo.#tmp_table2;
