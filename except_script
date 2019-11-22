@@ -70,7 +70,7 @@ left join
   (provider_id in (303, 316, 359, 409, 431, 433, 426, 448, 256, 327, 307, 350, 83, 92, 93, 124, 127, 135, 158, 205, 213, 214, 215, 258)
   OR c.provider_service_component_id in (select distinct provider_service_component_id from apc_pv_serv_comp_cl_wh
                                          where client_id in (-4, 1, 6, 11, 17, 18, 24, 34, 35, 36, 37, 39, 40, 43, 45, 46, 47, 14, 5))
-  OR w.provider_service_component_id is null   --For some reason a not in query didn't work and had to do a left join)
+  OR w.provider_service_component_id is null)
   and    provider_service_component_descr not like '%green book%'
   and isnull(dir_client_load,0) <> 1    
   ;
