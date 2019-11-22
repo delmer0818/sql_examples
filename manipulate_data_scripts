@@ -1,0 +1,74 @@
+SELECT	FILE_KEY, ACTIVE_FLAG, COUNT(*) ROW_COUNTS, MIN(LOAD_DATE), MAX(LOAD_DATE)
+FROM	XF_MSTR_DGP_NSV_SHIP
+GROUP BY		FILE_KEY, ACTIVE_FLAG
+
+
+select	file_key, load_date, count(*) 
+where	1=1
+and		active_flag = 1
+group by		file_key, load_date
+
+select	*
+from	COLL_TRANS.dbo.apc_cy_file_process
+where	PROVIDER_SERVICE_COMPONENT_ID in (select PROVIDER_SERVICE_COMPONENT_ID from AP_TRANS.dbo.APC_PV_SERV_COMP 
+                                        where provider_id = 307 and ACTIVE_FLAG = 1)
+AND		CAST(GETDATE() AS DATE) = CAST(CREATE_DATE AS DATE)
+
+/*****/
+
+update ap_trans.dbo.apc_cy_cycle_etl_chain
+set     processed_etl_data_flow_id = 0
+        , process_etl_level_id = 0
+        , process_status_id = 29
+        , update_date = getdate()
+        , update_user_id = 'RESET_CYCLE'
+where
+        cycle_id = 998
+and     active_flag = 1
+
+/*****/
+
+set identity_insert XF_MSTR_DGP_NSV_SHIP ON
+INSERT INTO XF_MSTR_DGP_NSV_SHIP (
+		ROW_ID
+	,	WAREHOUSE_ID 
+	,	MATERIAL 
+	,	FISCPER 
+	,	SHIP_VOL_9L 
+	,	SHIP_NSALES 
+	,	SHIP_GPROFIT
+	,	DEPL_NSALES 
+	,	DEPL_DGP_RT 
+	,	CASE_UNIT 
+	,	DOC_CURR 
+	,	FISC_VARNT 
+	,	FILE_KEY
+	,	ACTIVE_FLAG 
+	,	CREATE_DATE 
+	,	CREATE_USER_ID
+	,	UPDATE_DATE
+	,	UPDATE_USER_ID
+	,	LOAD_DATE  )
+SELECT
+		ROW_ID + 146399 ROW_ID
+	,	WAREHOUSE_ID 
+	,	MATERIAL 
+	,	FISCPER 
+	,	SHIP_VOL_9L 
+	,	SHIP_NSALES 
+	,	SHIP_GPROFIT
+	,	DEPL_NSALES 
+	,	DEPL_DGP_RT 
+	,	CASE_UNIT 
+	,	DOC_CURR 
+	,	FISC_VARNT 
+	,	FILE_KEY
+	,	ACTIVE_FLAG 
+	,	CREATE_DATE 
+	,	CREATE_USER_ID
+	,	UPDATE_DATE
+	,	UPDATE_USER_ID
+	,	LOAD_DATE  
+FROM	XF_MSTR_DGP_NSV_SHIP
+ORDER BY		ROW_ID
+

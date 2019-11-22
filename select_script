@@ -1,6 +1,0 @@
--- select participant demographic data from database, based on the ssn's that are provided by the client
-
-select p.ssn, p.first_name as First_Name, p.last_name as Last_Name, address
-from particiapant p
-where p.ssn in (-- list of ssn's);
-
