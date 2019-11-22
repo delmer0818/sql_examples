@@ -1,3 +1,20 @@
 -- updating data in Call Doc database
 declare @productkey int;
 delete from ReasonCodes where ReasonText in ('SBC Request', 'Fulfillment Request');
+
+/*****/
+
+USE [clientname_TRANS]
+
+DELETE FROM [dbo].[APC_CY_STATUS]
+      WHERE ACTIVE_FLAG = 'N'
+
+/*****/
+
+USE [clientname_MASK]
+
+DELETE FROM [dbo].[VNEWF_TLU_AP_USERS]
+      WHERE (prompt_flag = 'N'
+      AND active_flag = 'N')
+
+
