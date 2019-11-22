@@ -25,3 +25,135 @@ BEGIN
 	END CATCH
 
 END
+
+
+/****** Object:  StoredProcedure [dbo].[USP_CY_UPDATE_START] ******/
+SET ANSI_NULLS ON
+
+SET QUOTED_IDENTIFIER ON
+
+CREATE PROCEDURE [dbo].[USP_CY_UPDATE_START]
+(       @CYCLE_ID int,
+        @AUD_LOAD_KEY int
+)
+AS
+
+BEGIN
+Declare  @RetCode int
+	,@myERROR int -- Local @@ERROR
+	,@myRowCount int -- Local @@ROWCOUNT
+        ,@FileKey int
+        ,@ClientTransDB varchar(50)
+        ,@cnt int
+        ,@etl_df_id int
+        ,@Msg varchar(200)
+        ,@Status varchar(50)
+        ,@StatusID int
+	,@sqlStmt varchar(4000)
+
+set @RetCode = 0
+
+UPDATE ap_trans.dbo.apc_cy_cycle
+       SET CYCLE_START_DATE = getdate()
+      ,CYCLE_STATUS_ID = 30
+      ,UPDATE_DATE = getdate()
+      ,UPDATE_USER_ID = 'USP_CY_START_CYCLE'
+ where cycle_id = @CYCLE_ID
+  and cycle_start_date is null
+
+SELECT @myERROR = @@ERROR,
+       @myRowCOUNT = @@ROWCOUNT
+
+	IF @myERROR > 0
+      	begin --1
+                SET @Status = 'Failed'
+                SET @StatusID = 9
+                SET @Msg = 'Upd Restate Files Qry Errored in USP_CY_UPDATE_START'
+                SET @RetCode = 1
+                Insert into AUD_LOG
+                            (aud_step_type_id
+                            , aud_load_key
+                            , cycle_id
+                            , status_id
+                            , status
+                            , row_count
+                            , err_code
+                            , msg
+                            , table_name
+                            , create_date)
+                Values
+                            (5
+                            ,@AUD_LOAD_KEY
+                            ,@CYCLE_ID
+                            ,@StatusID
+                            ,@Status
+                            ,@myRowCOUNT
+                            ,@myERROR
+                            ,@Msg
+                            ,'apc_cy_file_process'
+                            ,getdate()
+                            )
+		end --1
+        else
+        begin --2
+		If @myRowCOUNT > 0
+            	begin --3
+                  	-- update proc_dir_list restated_ind
+                  	set @sqlstmt = 'Update whs_audit.dbo.proc_dir_list
+                  	set file_restated_ind = ''Y''
+                  	where file_key in (select file_key
+                                   from ' + @ClientTransDB + '.dbo.apc_cy_file_process
+                                   where file_process_status_id = 34)
+                    	and (file_restated_ind is null or file_restated_ind != ''Y'')'
+
+                  	SELECT @myERROR = @@ERROR,
+                               @myRowCOUNT = @@ROWCOUNT
+
+                  	IF @myERROR > 0
+                  	begin --4
+                            SET @Status = 'Failed'
+                            SET @StatusID = 9
+                            SET @Msg = 'Upd Restate_Ind Qry Errored in USP_CY_UPDATE_START'
+                            SET @RetCode = 1
+                  	end --4
+                  	else
+                  	begin --5
+                            SET @Status = 'Success'
+                            SET @StatusID = 10
+                            SET @Msg = cast(@myRowCount as varchar) + ' files have been restated'
+                  	end --5
+                  	
+			If (@myERROR > 0 or @myRowCount > 0)
+			begin --6
+                            Insert into AUD_LOG
+                                        (aud_step_type_id
+                                        , aud_load_key
+                                        , cycle_id
+                                        , status_id
+                                        , status
+                                        , row_count
+                                        , err_code
+                                        , msg
+                                        , table_name
+                                        , create_date)
+                            Values
+                                        (5
+                                        ,@AUD_LOAD_KEY
+                                        ,@CYCLE_ID
+                                        ,@StatusID
+                                        ,@Status
+                                        ,@myRowCOUNT
+                                        ,@myERROR
+                                        ,@Msg
+                                        ,'PROC_DIR_LIST'
+                                        ,getdate()
+                                        )
+			end --6
+		end --3
+	end --2
+
+
+RETURN(@RetCode)
+
+END 
+
