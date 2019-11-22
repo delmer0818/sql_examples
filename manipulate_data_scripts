@@ -4,11 +4,6 @@ GROUP BY		FILE_KEY, ACTIVE_FLAG
 
 
 select	file_key, load_date, count(*) 
-where	1=1
-and		active_flag = 1
-group by		file_key, load_date
-
-select	*
 from	COLL_TRANS.dbo.apc_cy_file_process
 where	PROVIDER_SERVICE_COMPONENT_ID in (select PROVIDER_SERVICE_COMPONENT_ID from AP_TRANS.dbo.APC_PV_SERV_COMP 
                                         where provider_id = 307 and ACTIVE_FLAG = 1)
